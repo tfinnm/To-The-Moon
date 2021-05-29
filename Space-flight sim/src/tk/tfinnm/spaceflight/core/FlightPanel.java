@@ -72,13 +72,21 @@ public class FlightPanel {
 		Timer timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(sf.getThrust(0));
-				System.out.println(sf.getMass());
+				//System.out.println(sf.getThrust(0));
+				//System.out.println(sf.getMass());
 			}
 		});
 		timer.setRepeats(true);
 		timer.start();
 		timer.setRepeats(true);
+	}
+	
+	private double calculateGravity(double mass, double alt) {
+		double r = 6378137+alt;
+		double me= (5.9724*(Math.pow(10, 24)));
+		double ugc = (6.67430*(Math.pow(10, -11)));
+		double top =me*mass*ugc;
+		return top/(Math.pow(r, 2));
 	}
 
 }
