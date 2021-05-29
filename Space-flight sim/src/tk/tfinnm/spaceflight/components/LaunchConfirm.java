@@ -4,12 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.Timer;
+
+import tk.tfinnm.spaceflight.core.*;
 
 public class LaunchConfirm extends JPanel{
 	
@@ -42,6 +43,9 @@ public class LaunchConfirm extends JPanel{
 					time--;
 					countdown.setValue(time);
 					countdown.setString("T-minus "+time+" seconds");
+					if (time <= 3) {
+						FlightPanel.solid.setEnabled(true);
+					}
 				} else {
 					countdown.setString("Lift Off!");
 					countdown.setIndeterminate(true);

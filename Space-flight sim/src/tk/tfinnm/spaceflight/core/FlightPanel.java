@@ -1,15 +1,21 @@
 package tk.tfinnm.spaceflight.core;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
 
 import tk.tfinnm.spaceflight.components.*;
+import tk.tfinnm.spaceflight.helpers.DisabledPanel;
 
 public class FlightPanel {
 	
 	static JFrame flightpanel;
 	
 	public static final int version = 0;
+	
+	public static DisabledPanel solid;
 	
 	public FlightPanel() {
 		//Configure Flight Panel
@@ -31,6 +37,7 @@ public class FlightPanel {
 		//Create Menus
 		JMenu quickMenu = new JMenu("Quick Controls");
 		JMenu SummaryMenu = new JMenu("Mission Summary");
+		JMenu objectiveMenu = new JMenu("Mission Objectives");
 		JMenu gameMenu = new JMenu("Game Options");
 
 		//Configure Flight Panel Content
@@ -47,11 +54,31 @@ public class FlightPanel {
 		
 		menu.add(quickMenu);
 		menu.add(SummaryMenu);
+		menu.add(objectiveMenu);
 		menu.add(gameMenu);
 
 		//create launch control
+		SolidFuel sf = new SolidFuel();
+		solid = new DisabledPanel(sf);
+		solid.setEnabled(false);
+		
 		Launchcontent.add(new LaunchConfirm(), BorderLayout.SOUTH);
-		Launchcontent.add(new SolidFuel(), BorderLayout.WEST);
+		Launchcontent.add(solid, BorderLayout.WEST);
+		
+		
+		
+		
+		//main loop
+		Timer timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(sf.getThrust(0));
+				System.out.println(sf.getMass());
+			}
+		});
+		timer.setRepeats(true);
+		timer.start();
+		timer.setRepeats(true);
 	}
 
 }
