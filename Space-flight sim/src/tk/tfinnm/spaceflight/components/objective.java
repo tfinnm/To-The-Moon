@@ -23,7 +23,7 @@ public class objective extends JCheckBoxMenuItem{
 		Timer timer = new Timer(500, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				checkIfComplete((int) FlightPanel.alt,0);
+				checkIfComplete((int) FlightPanel.alt,Potatoes.ammount.getValue());
 			}
 		});
 		timer.setRepeats(true);

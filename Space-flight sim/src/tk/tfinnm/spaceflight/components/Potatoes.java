@@ -11,7 +11,7 @@ public class Potatoes extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	//0.2825 kg/each
-	private JSlider ammount;
+	public static JSlider ammount;
 	public Potatoes() {
 		
 		setBorder(BorderFactory.createTitledBorder("Cargo: Potatoes"));

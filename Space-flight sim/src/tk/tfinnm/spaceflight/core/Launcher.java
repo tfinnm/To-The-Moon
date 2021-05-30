@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+import java.util.Vector;
 
 import javax.swing.*;
 
@@ -31,7 +32,7 @@ public class Launcher {
 		JEditorPane updatestext = new JEditorPane();
         updatestext.setContentType("text/html");
 		updatestext.setEditable(false);
-
+		
 		JScrollPane updatescroll = new JScrollPane(updatestext);
 		JTabbedPane lc = new JTabbedPane();
 		lc.addTab("Single Player", SPcontent);
@@ -52,6 +53,10 @@ public class Launcher {
 		});
 		//SPcontent.add(scenarioList,BorderLayout.CENTER); //TODO: rocket designer goes here
 		SPcontent.add(play,BorderLayout.SOUTH);
+		Vector<String> scenarios = new Vector<>();
+		scenarios.add("NASA Space Shuttle");
+		JList<String> scenarioList = new JList<String>(scenarios);
+		SPcontent.add(scenarioList,BorderLayout.CENTER);
 		launcher.setContentPane(lc);
 		launcher.setVisible(true);
 //		try {
