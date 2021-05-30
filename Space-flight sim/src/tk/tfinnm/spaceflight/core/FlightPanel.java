@@ -18,6 +18,8 @@ public class FlightPanel {
 	public static final int version = 0;
 	
 	public static DisabledPanel solid;
+	public static DisabledPanel payload;
+	public static JMenuItem ignite;
 	
 	public FlightPanel() {
 		//Configure Flight Panel
@@ -31,10 +33,10 @@ public class FlightPanel {
 		
 		//Create Screens
 		JPanel Launchcontent = new JPanel(new BorderLayout());
-		JPanel fuelcontent = new JPanel(new BorderLayout());
+		JPanel fuelcontent = new JPanel(new GridLayout(1,0));
 		JPanel lifesupportcontent = new JPanel(new BorderLayout());
 		JPanel reactorcontent = new JPanel(new BorderLayout());
-		JPanel payloadcontent = new JPanel(new BorderLayout());
+		JPanel payloadcontent = new JPanel(new GridLayout(1,0));
 		
 		//Create Menus
 		JMenu quickMenu = new JMenu("Quick Controls");
@@ -44,7 +46,14 @@ public class FlightPanel {
 		
 		//add objectives
 		objectiveMenu.add(new objective("Take Off!", 10, 0));
+		objectiveMenu.add(new objective("Reach Space", 122000, 0));
+		objectiveMenu.add(new objective("Deliver Potatoes to the ISS!", 330000, 1770));
+		objectiveMenu.add(new objective("To the Moon!", 384000000, 3540));
 
+		//add Quick Controls
+		ignite = new JMenuItem("Ignite All Engines");
+		quickMenu.add(ignite);
+		
 		//Configure Flight Panel Content
 		JTabbedPane lc = new JTabbedPane();
 		flightpanel.setContentPane(lc);
@@ -61,9 +70,44 @@ public class FlightPanel {
 		menu.add(SummaryMenu);
 		menu.add(objectiveMenu);
 		menu.add(gameMenu);
-
+		
+		//game menu
+		JMenuItem exit = new JMenuItem("Exit Game");
+		exit.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);	
+			}
+		});
+		JMenuItem newGame = new JMenuItem("New Game");
+		newGame.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				flightpanel.dispose();
+				new FlightPanel();
+				alt = 0;
+			}
+		});
+		gameMenu.add(newGame);
+		gameMenu.add(exit);
+		
+		//Setup payload screen
+		Potatoes cargo = new Potatoes();
+		payload = new DisabledPanel(cargo);
+		payload.setEnabled(true);
+		payloadcontent.add(payload);
+		
 		//create launch control
 		SolidFuel sf = new SolidFuel();
+		ignite.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for (engine eng: sf.engines) {
+					eng.ign.doClick();
+				}
+			}
+		});
+		ignite.setEnabled(false);
 		solid = new DisabledPanel(sf);
 		solid.setEnabled(false);
 		JTabbedPane graphs = new JTabbedPane();
@@ -113,7 +157,7 @@ public class FlightPanel {
 		Timer timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				alt += getVelocity(sf.getMass(),sf.getThrust((int) alt));
+				alt += getVelocity((sf.getMass()+cargo.getMass()),sf.getThrust((int) alt));
 				if (alt < 0) {
 					alt = 0;
 				}
@@ -138,7 +182,7 @@ public class FlightPanel {
 	private double getVelocity(double mass, double thrust) {
 		this.thrust.addPoint(this.thrust.getMaxX()+1, thrust);
 		velocity += getAcceleration(mass, thrust);
-		if (!(alt > 0)) {
+		if ((alt <= 0)) {
 			if (velocity < 0) {
 				velocity = 0;
 			}
