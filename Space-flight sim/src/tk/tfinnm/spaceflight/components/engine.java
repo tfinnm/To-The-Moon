@@ -6,6 +6,8 @@ import java.awt.event.*;
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
 
+import tk.tfinnm.spaceflight.core.FlightPanel;
+
 public class engine {
 	public String name;
 	public int thrust;
@@ -27,7 +29,7 @@ public class engine {
 		this.burnRate = burnrate;
 		this.baseWeight = weight;
 		ign = new JButton("Ignite "+name);
-		rel = new JButton("Detatch "+name);
+		rel = new JButton("Jettison "+name);
 		ogColor = rel.getBackground();
 		ign.addActionListener(new ActionListener() {
 			@Override
@@ -63,7 +65,7 @@ public class engine {
 		this.baseWeight = weight;
 		this.req = e;
 		ign = new JButton("Ignite "+name);
-		rel = new JButton("Detatch "+name);
+		rel = new JButton("Jettison "+name);
 		ogColor = rel.getBackground();
 		ign.addActionListener(new ActionListener() {
 			@Override
@@ -82,6 +84,9 @@ public class engine {
 				rel.setEnabled(false);
 				if (req != null) {
 					req.ign.setEnabled(true);
+					if (FlightPanel.autoignite.isSelected()) {
+						req.ign.doClick();
+					}
 				}
 				rel.setBackground(ogColor);
 			}
@@ -102,11 +107,15 @@ public class engine {
 		if (burn) {
 			if (fuelWeight > 0) {
 				fuelWeight-=burnRate;
+				if (fuelWeight < 0) fuelWeight = 0;
 				fuel.setString(name+" Fuel Remaining: "+fuelWeight+"/"+maxFuel+" (Kg)");
 				fuel.setValue(fuelWeight);
 				return thrust;
 			} else {
 				rel.setBackground(Color.red);
+				if (FlightPanel.autojettison.isSelected()) {
+					rel.doClick();
+				}
 			}
 		}
 		return 0;

@@ -44,13 +44,18 @@ public class LaunchConfirm extends JPanel{
 					countdown.setValue(time);
 					countdown.setString("T-minus "+time+" seconds");
 					FlightPanel.payload.setEnabled(false);
+					Power.control.setEnabled(false);
 					if (time <= 3) {
 						FlightPanel.solid.setEnabled(true);
 						FlightPanel.ignite.setEnabled(true);
 					}
 				} else {
+					Status = status.lanched;
 					countdown.setString("Lift Off!");
 					countdown.setIndeterminate(true);
+					if (FlightPanel.autoignite.isSelected()) {
+						FlightPanel.ignite.doClick();
+					}
 					timer.stop();
 				}
 			}
@@ -83,6 +88,7 @@ public class LaunchConfirm extends JPanel{
 					Status = status.ready;
 					time = 10;
 					FlightPanel.payload.setEnabled(true);
+					Power.control.setEnabled(true);
 					JOptionPane.showMessageDialog(null, "Launch Aborted Successfully.", "Aborted!", JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					timer.stop();

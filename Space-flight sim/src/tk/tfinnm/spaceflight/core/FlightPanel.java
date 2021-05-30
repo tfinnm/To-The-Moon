@@ -13,15 +13,29 @@ import tk.tfinnm.spaceflight.helpers.DisabledPanel;
 
 public class FlightPanel {
 	
-	static JFrame flightpanel;
+	public static JFrame flightpanel;
 	
 	public static final int version = 0;
 	
 	public static DisabledPanel solid;
 	public static DisabledPanel payload;
 	public static JMenuItem ignite;
+	public static JCheckBoxMenuItem autojettison;
+	public static JCheckBoxMenuItem autoignite;
+	
+	public static int maxAlt = 0;
+	public static int maxVel = 0;
+	public static int maxAcc = 0;
+	
+	private JMenuItem maxAlti = new JMenuItem("Maximum ALtitude: "+maxAlt+"m");
+	private JMenuItem maxVelo = new JMenuItem("Maximum Velocity: "+maxVel+"m/s");
+	private JMenuItem maxAccel = new JMenuItem("Maximum Acceleration: "+maxAcc+"m/s/s");
+	private JMenuItem time = new JMenuItem("Mission Length: 0s");
 	
 	public FlightPanel() {
+		maxAlt = 0;
+		maxVel = 0;
+		maxAcc = 0;
 		//Configure Flight Panel
 		flightpanel = new JFrame("Spaceflight Sim | Flight Controls");
 		flightpanel.setSize(1000, 500);
@@ -33,16 +47,20 @@ public class FlightPanel {
 		
 		//Create Screens
 		JPanel Launchcontent = new JPanel(new BorderLayout());
-		JPanel fuelcontent = new JPanel(new GridLayout(1,0));
+		JPanel fuelcontent = new JPanel(new GridLayout(0,1));
 		JPanel lifesupportcontent = new JPanel(new BorderLayout());
-		JPanel reactorcontent = new JPanel(new BorderLayout());
-		JPanel payloadcontent = new JPanel(new GridLayout(1,0));
+		JPanel payloadcontent = new JPanel(new GridLayout(0,1));
 		
 		//Create Menus
 		JMenu quickMenu = new JMenu("Quick Controls");
 		JMenu SummaryMenu = new JMenu("Mission Summary");
 		JMenu objectiveMenu = new JMenu("Mission Objectives");
 		JMenu gameMenu = new JMenu("Game Options");
+		
+		SummaryMenu.add(maxAlti);
+		SummaryMenu.add(maxVelo);
+		SummaryMenu.add(maxAccel);
+		SummaryMenu.add(time);
 		
 		//add objectives
 		objectiveMenu.add(new objective("Take Off!", 10, 0));
@@ -53,6 +71,20 @@ public class FlightPanel {
 		//add Quick Controls
 		ignite = new JMenuItem("Ignite All Engines");
 		quickMenu.add(ignite);
+		autojettison = new JCheckBoxMenuItem("Auto-Jettison");
+		quickMenu.add(autojettison);
+		autoignite = new JCheckBoxMenuItem("Auto-Ignite");
+		quickMenu.add(autoignite);
+		
+		//Configure Life Support
+		JPanel energy = new JPanel(new GridLayout(0,1));
+		lifesupportcontent.add(energy,BorderLayout.WEST);
+		energy.add(new Reactor());
+		energy.add(new Power());
+		JTabbedPane ls = new JTabbedPane();
+		lifesupportcontent.add(ls,BorderLayout.CENTER);
+		ls.addTab("Oxygen", new Oxygen());
+		ls.addTab("Temperature", new Heat());
 		
 		//Configure Flight Panel Content
 		JTabbedPane lc = new JTabbedPane();
@@ -60,10 +92,8 @@ public class FlightPanel {
 		JMenuBar menu = new JMenuBar();
 		flightpanel.setJMenuBar(menu);
 		
-		lc.addTab("Launch Controls", Launchcontent);
-		lc.addTab("Fuel", fuelcontent);
+		lc.addTab("Flight Controls", Launchcontent);
 		lc.addTab("Life Support Controls", lifesupportcontent);
-		lc.addTab("Reactor & Power Controls", reactorcontent);
 		lc.addTab("Payload", payloadcontent);
 		
 		menu.add(quickMenu);
@@ -139,6 +169,7 @@ public class FlightPanel {
 		graphs.addTab("Velocity",speedChart);
 		graphs.addTab("Acceleration", accelChart);
 		graphs.addTab("Altitude",altChart);
+		graphs.addTab("Fuel", fuelcontent);
 		
 		forceChart.addTrace(thrust);
 		forceChart.addTrace(grav);
@@ -151,15 +182,22 @@ public class FlightPanel {
 		Launchcontent.add(solid, BorderLayout.WEST);
 		Launchcontent.add(graphs, BorderLayout.CENTER);
 		
-		
+		//setup fuel screen
+		for (engine e: sf.engines) {
+			fuelcontent.add(e.fuel);	
+		}
 		
 		//main loop
 		Timer timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				alt += getVelocity((sf.getMass()+cargo.getMass()),sf.getThrust((int) alt));
+				alt += getVelocity((sf.getMass()+cargo.getMass()+(Power.control.getValue()*1000)),sf.getThrust((int) alt));
 				if (alt < 0) {
 					alt = 0;
+				}
+				if (alt > maxAlt) {
+					maxAlt = (int) alt;
+					maxAlti.setText("Maximum ALtitude: "+maxAlt+"m");
 				}
 				alti.addPoint(alti.getMaxX()+1, alt);
 				//System.out.println(alt);
@@ -183,17 +221,36 @@ public class FlightPanel {
 		this.thrust.addPoint(this.thrust.getMaxX()+1, thrust);
 		velocity += getAcceleration(mass, thrust);
 		if ((alt <= 0)) {
+			if (maxAlt > 10) {
+				JOptionPane.showMessageDialog(null, "Ship Crashed; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
 			if (velocity < 0) {
 				velocity = 0;
 			}
 		}
+		if (velocity > maxVel) {
+			maxVel = (int) velocity;
+			maxVelo.setText("Maximum Velocity: "+maxVel+"m/s");
+		}
 		this.velo.addPoint(this.velo.getMaxX()+1, velocity);
+		int hours =(((int)this.velo.getMaxX())/360);
+		int minutes = (((int)this.velo.getMaxX())%360)/60;
+		int seconds = ((int)this.velo.getMaxX())%60;
+		String hour = (hours < 10)?"0"+hours:""+hours;
+		String minute = (minutes < 10)?"0"+minutes:""+minutes;
+		String second = (seconds < 10)?"0"+seconds:""+seconds;
+		time.setText("Mission Length: "+hour+":"+minute+":"+second);
 		return velocity;
 	}
 	private double getAcceleration(double mass, double thrust) {
 		double grav = calculateGravity(mass);
 		double netforce = thrust-grav-0;
 		double acceleration = netforce/mass;
+		if (acceleration > maxAcc) {
+			maxAcc = (int) acceleration;
+			maxAccel.setText("Maximum Acceleration: "+maxAcc+"m/s/s");
+		}
 		this.accel.addPoint(this.accel.getMaxX()+1, acceleration);
 		this.grav.addPoint(this.grav.getMaxX()+1, grav);
 		return acceleration;
