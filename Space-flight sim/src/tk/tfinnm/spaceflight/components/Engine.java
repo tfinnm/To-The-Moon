@@ -8,20 +8,20 @@ import javax.swing.JProgressBar;
 
 import tk.tfinnm.spaceflight.core.FlightPanel;
 
-public class engine {
+public class Engine {
 	public String name;
 	public int thrust;
 	public int fuelWeight;
 	public int maxFuel;
 	public int burnRate;
 	public int baseWeight;
-	public engine req;
+	public Engine req;
 	public JButton ign;
 	public JButton rel;
 	public JProgressBar fuel;
 	private Color ogColor;
 	private boolean burn = false;
-	public engine(String name, int thrust, int fweight, int burnrate, int weight) {
+	public Engine(String name, int thrust, int fweight, int burnrate, int weight) {
 		this.name = name;
 		this.thrust = thrust;
 		this.fuelWeight = fweight;
@@ -56,7 +56,7 @@ public class engine {
 		fuel.setMaximum(fweight);
 		fuel.setValue(fweight);
 	}
-	public engine(String name, int thrust, int fweight, int burnrate, int weight, boolean pre, engine e) {
+	public Engine(String name, int thrust, int fweight, int burnrate, int weight, boolean pre, Engine e) {
 		this.name = name;
 		this.thrust = thrust;
 		this.fuelWeight = fweight;

@@ -3,6 +3,7 @@ package tk.tfinnm.spaceflight.core;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -32,7 +33,13 @@ public class FlightPanel {
 	private JMenuItem maxAccel = new JMenuItem("Maximum Acceleration: "+maxAcc+"m/s/s");
 	private JMenuItem time = new JMenuItem("Mission Length: 0s");
 	
-	public FlightPanel() {
+	public static boolean lab = false;
+	
+	private Planet planet;
+	
+	public FlightPanel(Spacecraft spacecraft, List<Mission> missions, Planet planet, boolean labMode) {
+		lab = labMode;
+		this.planet = planet;
 		maxAlt = 0;
 		maxVel = 0;
 		maxAcc = 0;
@@ -63,10 +70,12 @@ public class FlightPanel {
 		SummaryMenu.add(time);
 		
 		//add objectives
-		objectiveMenu.add(new objective("Take Off!", 10, 0));
-		objectiveMenu.add(new objective("Reach Space", 122000, 0));
-		objectiveMenu.add(new objective("Deliver Potatoes to the ISS!", 330000, 1770));
-		objectiveMenu.add(new objective("To the Moon!", 384000000, 3540));
+		for(Mission m: missions) {
+			for(Objective o: m.getObjectives()) {
+				objectiveMenu.add(o);
+				o.start();
+			}
+		}
 
 		//add Quick Controls
 		ignite = new JMenuItem("Ignite All Engines");
@@ -102,6 +111,13 @@ public class FlightPanel {
 		menu.add(gameMenu);
 		
 		//game menu
+//		JMenuItem export = new JMenuItem("Export Data");
+//		export.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				alti.getpoi
+//			}
+//		});
 		JMenuItem exit = new JMenuItem("Exit Game");
 		exit.addActionListener(new ActionListener() {
 			@Override
@@ -114,10 +130,11 @@ public class FlightPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				flightpanel.dispose();
-				new FlightPanel();
+				Launcher.main(new String[0]);
 				alt = 0;
 			}
 		});
+		//gameMenu.add(export);
 		gameMenu.add(newGame);
 		gameMenu.add(exit);
 		
@@ -126,13 +143,24 @@ public class FlightPanel {
 		payload = new DisabledPanel(cargo);
 		payload.setEnabled(true);
 		payloadcontent.add(payload);
+		//TODO: crew: 6 cap. consumes more air, heavy. type: tech., capt., scientist, engineer, tourists/tour guides, etc.
+		//TODO: science experiments (game of life?)
+		//TODO: satellite deployments
+		//TODO: real resupplies
+		//TODO: space weapons
+		//TODO: space walks
+		//TODO: objectives for all of these
+		//TODO: scenario system
+		//TODO: data/flight log
+		//TODO: flight history log
+		
 		
 		//create launch control
-		SolidFuel sf = new SolidFuel();
+		SolidFuel sf = new SolidFuel(spacecraft);
 		ignite.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for (engine eng: sf.engines) {
+				for (Engine eng: sf.engines) {
 					eng.ign.doClick();
 				}
 			}
@@ -173,7 +201,7 @@ public class FlightPanel {
 		
 		forceChart.addTrace(thrust);
 		forceChart.addTrace(grav);
-		forceChart.addTrace(drag);
+		//forceChart.addTrace(drag);
 		speedChart.addTrace(velo);
 		accelChart.addTrace(accel);
 		altChart.addTrace(alti);
@@ -183,7 +211,7 @@ public class FlightPanel {
 		Launchcontent.add(graphs, BorderLayout.CENTER);
 		
 		//setup fuel screen
-		for (engine e: sf.engines) {
+		for (Engine e: sf.engines) {
 			fuelcontent.add(e.fuel);	
 		}
 		
@@ -234,8 +262,8 @@ public class FlightPanel {
 			maxVelo.setText("Maximum Velocity: "+maxVel+"m/s");
 		}
 		this.velo.addPoint(this.velo.getMaxX()+1, velocity);
-		int hours =(((int)this.velo.getMaxX())/360);
-		int minutes = (((int)this.velo.getMaxX())%360)/60;
+		int hours =(((int)this.velo.getMaxX())/3600);
+		int minutes = (((int)this.velo.getMaxX())%3600)/60;
 		int seconds = ((int)this.velo.getMaxX())%60;
 		String hour = (hours < 10)?"0"+hours:""+hours;
 		String minute = (minutes < 10)?"0"+minutes:""+minutes;
@@ -256,8 +284,8 @@ public class FlightPanel {
 		return acceleration;
 	}
 	private double calculateGravity(double mass) {
-		double r = 6378137+alt;
-		double me= (5.9724*(Math.pow(10, 24)));
+		double r = planet.getRadius()+alt;
+		double me= planet.getMass();
 		double ugc = (6.67430*(Math.pow(10, -11)));
 		double top =me*mass*ugc;
 		return top/(Math.pow(r, 2));

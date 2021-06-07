@@ -8,18 +8,20 @@ import javax.swing.Timer;
 
 import tk.tfinnm.spaceflight.core.FlightPanel;
 
-public class objective extends JCheckBoxMenuItem{
+public class Objective extends JCheckBoxMenuItem{
 
 	private static final long serialVersionUID = 1L;
 	
 	private int minAlt;
 	private int minPotato;
 	private boolean complete = false;
-	public objective(String name, int alt, int potatoes) {
+	public Objective(String name, int alt, int potatoes) {
 		super(name+" ["+alt+"m, "+potatoes+" potatoes]");
 		this.setEnabled(false);
 		this.minAlt = alt;
 		this.minPotato = potatoes;
+	}
+	public void start() {
 		Timer timer = new Timer(500, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

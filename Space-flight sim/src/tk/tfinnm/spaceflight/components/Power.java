@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import tk.tfinnm.spaceflight.core.FlightPanel;
+
 public class Power extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -76,8 +78,10 @@ public class Power extends JPanel {
 				Store.setString("Stored: "+storage+"/"+control.getValue()+"Wh");
 				
 				if (oop) {
-					JOptionPane.showMessageDialog(null, "Power Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-					System.exit(0);
+					if (!FlightPanel.lab) {
+						JOptionPane.showMessageDialog(null, "Power Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
+						System.exit(0);
+					}
 				}
 			}
 		});
