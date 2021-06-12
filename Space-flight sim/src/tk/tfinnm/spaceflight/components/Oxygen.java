@@ -28,8 +28,10 @@ public class Oxygen extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				status = !status;
 				if (status) {
+					FlightPanel.logEvent("Scrubber Activated");
 					toggle.setText("Turn Off Scrubber");
 				} else {
+					FlightPanel.logEvent("Scrubber Deactivated");
 					toggle.setText("Turn On Scrubber");
 				}
 			}

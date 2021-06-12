@@ -79,6 +79,7 @@ public class Power extends JPanel {
 				
 				if (oop) {
 					if (!FlightPanel.lab) {
+						FlightPanel.logEvent("Power Failure");
 						JOptionPane.showMessageDialog(null, "Power Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
 						System.exit(0);
 					}

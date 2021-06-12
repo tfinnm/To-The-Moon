@@ -12,6 +12,8 @@ import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.Timer;
 
+import tk.tfinnm.spaceflight.core.FlightPanel;
+
 public class Heat extends JPanel {
 
 	public static int temp = 20;
@@ -29,8 +31,10 @@ public class Heat extends JPanel {
 				status = !status;
 				if (status) {
 					toggle.setText("Turn Off Heater");
+					FlightPanel.logEvent("Heater Activated");
 				} else {
 					toggle.setText("Turn On Heater");
+					FlightPanel.logEvent("Scrubber Deactivated");
 				}
 			}
 		});

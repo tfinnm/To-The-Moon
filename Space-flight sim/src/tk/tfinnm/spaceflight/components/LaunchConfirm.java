@@ -65,6 +65,7 @@ public class LaunchConfirm extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Status = status.pending;
+				FlightPanel.logEvent("Countdown Initiated");
 				time = 10;
 				remove(launch);
 				add(countdown,BorderLayout.CENTER);
@@ -86,6 +87,7 @@ public class LaunchConfirm extends JPanel{
 					remove(abort);
 					add(launch, BorderLayout.CENTER);
 					Status = status.ready;
+					FlightPanel.logEvent("Launch Canceled");
 					time = 10;
 					FlightPanel.payload.setEnabled(true);
 					Power.control.setEnabled(true);
@@ -93,6 +95,7 @@ public class LaunchConfirm extends JPanel{
 				} else {
 					timer.stop();
 					Status = status.aborted;
+					FlightPanel.logEvent("Mission Aborted; LES Activated.");
 					JOptionPane.showMessageDialog(null, "Launch Aborted; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
 					System.exit(0);
 				}

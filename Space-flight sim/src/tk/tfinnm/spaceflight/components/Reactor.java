@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import tk.tfinnm.spaceflight.core.FlightPanel;
+
 public class Reactor extends JPanel {
 
 	private static final long serialVersionUID = 1L;
@@ -41,6 +43,7 @@ public class Reactor extends JPanel {
 		SCRAM.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				FlightPanel.logEvent("Reactor SCRAMed");
 				temperature = 0;
 				output = 0;
 				control.setValue(0);
@@ -70,6 +73,7 @@ public class Reactor extends JPanel {
 					}
 				}
 				if (radiation >= 400) {
+					FlightPanel.logEvent("Reactor Meltdown [Temp: "+(temperature+Heat.temp)+"; Rad: "+radiation+"mSv]");
 					JOptionPane.showMessageDialog(null, "Total Meltdown; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
 					System.exit(0);
 				}

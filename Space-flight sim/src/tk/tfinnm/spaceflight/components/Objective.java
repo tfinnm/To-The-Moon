@@ -14,12 +14,14 @@ public class Objective extends JCheckBoxMenuItem{
 	
 	private int minAlt;
 	private int minPotato;
+	private String name;
 	private boolean complete = false;
 	public Objective(String name, int alt, int potatoes) {
 		super(name+" ["+alt+"m, "+potatoes+" potatoes]");
 		this.setEnabled(false);
 		this.minAlt = alt;
 		this.minPotato = potatoes;
+		this.name = name;
 	}
 	public void start() {
 		Timer timer = new Timer(500, new ActionListener() {
@@ -36,6 +38,8 @@ public class Objective extends JCheckBoxMenuItem{
 		if (alt >= minAlt && potato >= minPotato) {
 			if (!complete) {
 				this.setSelected(true);
+				FlightPanel.logEvent("Completed Objective: "+name);
+				complete = true;
 			}
 		}
 	}

@@ -3,9 +3,14 @@ package tk.tfinnm.spaceflight.core;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import info.monitorenter.gui.chart.Chart2D;
 import info.monitorenter.gui.chart.traces.Trace2DLtd;
@@ -37,9 +42,16 @@ public class FlightPanel {
 	
 	private Planet planet;
 	
+	public static ArrayList<String> flightDataLog;
+	public static ArrayList<String> lifeDataLog;
+	public static ArrayList<String> eventLog;
+	
 	public FlightPanel(Spacecraft spacecraft, List<Mission> missions, Planet planet, boolean labMode) {
 		lab = labMode;
 		this.planet = planet;
+		flightDataLog = new ArrayList<String>();
+		lifeDataLog = new ArrayList<String>();
+		eventLog = new ArrayList<String>();
 		maxAlt = 0;
 		maxVel = 0;
 		maxAcc = 0;
@@ -111,13 +123,20 @@ public class FlightPanel {
 		menu.add(gameMenu);
 		
 		//game menu
-//		JMenuItem export = new JMenuItem("Export Data");
-//		export.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				alti.getpoi
-//			}
-//		});
+		JMenuItem export = new JMenuItem("Export Flight Data");
+		export.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				export(flightDataLog);
+			}
+		});
+		JMenuItem export2 = new JMenuItem("Export Event Log");
+		export2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				export(eventLog);
+			}
+		});
 		JMenuItem exit = new JMenuItem("Exit Game");
 		exit.addActionListener(new ActionListener() {
 			@Override
@@ -134,7 +153,8 @@ public class FlightPanel {
 				alt = 0;
 			}
 		});
-		//gameMenu.add(export);
+		gameMenu.add(export);
+		gameMenu.add(export2);
 		gameMenu.add(newGame);
 		gameMenu.add(exit);
 		
@@ -228,6 +248,7 @@ public class FlightPanel {
 					maxAlti.setText("Maximum ALtitude: "+maxAlt+"m");
 				}
 				alti.addPoint(alti.getMaxX()+1, alt);
+				flightDataLog.add(formatTime((int)alti.getMaxX())+","+alt+","+velocity+","+acceleration+","+fthrust+","+fgrav);
 				//System.out.println(alt);
 				//System.out.println(sf.getThrust(0));
 				//System.out.println(sf.getMass());
@@ -242,9 +263,12 @@ public class FlightPanel {
 	private Trace2DLtd drag;
 	private Trace2DLtd accel;
 	private Trace2DLtd velo;
-	private Trace2DLtd alti;
+	private static Trace2DLtd alti;
 	public static double alt = 0;
 	private double velocity = 0;
+	private double acceleration = 0;
+	private double fthrust = 0;
+	private double fgrav = 0;
 	private double getVelocity(double mass, double thrust) {
 		this.thrust.addPoint(this.thrust.getMaxX()+1, thrust);
 		velocity += getAcceleration(mass, thrust);
@@ -262,19 +286,16 @@ public class FlightPanel {
 			maxVelo.setText("Maximum Velocity: "+maxVel+"m/s");
 		}
 		this.velo.addPoint(this.velo.getMaxX()+1, velocity);
-		int hours =(((int)this.velo.getMaxX())/3600);
-		int minutes = (((int)this.velo.getMaxX())%3600)/60;
-		int seconds = ((int)this.velo.getMaxX())%60;
-		String hour = (hours < 10)?"0"+hours:""+hours;
-		String minute = (minutes < 10)?"0"+minutes:""+minutes;
-		String second = (seconds < 10)?"0"+seconds:""+seconds;
-		time.setText("Mission Length: "+hour+":"+minute+":"+second);
+
+		time.setText("Mission Length: "+formatTime((int)this.velo.getMaxX()));
 		return velocity;
 	}
 	private double getAcceleration(double mass, double thrust) {
 		double grav = calculateGravity(mass);
+		fgrav = grav;
+		fthrust = thrust;
 		double netforce = thrust-grav-0;
-		double acceleration = netforce/mass;
+		acceleration = netforce/mass;
 		if (acceleration > maxAcc) {
 			maxAcc = (int) acceleration;
 			maxAccel.setText("Maximum Acceleration: "+maxAcc+"m/s/s");
@@ -291,4 +312,40 @@ public class FlightPanel {
 		return top/(Math.pow(r, 2));
 	}
 
+	private static String formatTime(int s) {
+		int hours = s/3600;
+		int minutes = (s%3600)/60;
+		int seconds = s%60;
+		String hour = (hours < 10)?"0"+hours:""+hours;
+		String minute = (minutes < 10)?"0"+minutes:""+minutes;
+		String second = (seconds < 10)?"0"+seconds:""+seconds;
+		return hour+":"+minute+":"+second;
+	}
+	
+	public static void logEvent(String event) {
+		eventLog.add(formatTime((int)alti.getMaxX())+","+event);
+	}
+	
+	private void export(ArrayList<String> arr) {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Specify where to save");
+		fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Comma Seperated Values (CSV) File", "csv"));
+		int userSelection = fileChooser.showSaveDialog(flightpanel);
+		 
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+		    File fileToSave = fileChooser.getSelectedFile();
+		    try {
+				fileToSave.createNewFile();
+		        PrintWriter out = new PrintWriter(fileToSave);
+
+		        for (String s: arr) {
+		        	out.println(s);
+		        }
+
+		        out.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
 }
