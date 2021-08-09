@@ -1,5 +1,7 @@
 package tk.tfinnm.spaceflight.core;
 
+import javax.swing.LookAndFeel;
+
 import tk.tfinnm.spaceflight.components.ContentPack;
 import tk.tfinnm.spaceflight.components.Engine;
 import tk.tfinnm.spaceflight.components.Mission;
@@ -31,7 +33,7 @@ public class DefaultContent extends ContentPack {
 		Engine mb2 = new Engine("Merlin Booster 2",8200000,398540,2587,22226);
 		Engine s2h = new Engine("Stage 2 Engine",14000000,1179340,3103,117934,true,null);
 		Engine s1h = new Engine("Stage 1 Engine",74000000,3401943,10308,117934,false,s2h);
-		return new Spacecraft[]{new Spacecraft("NASA Space Shuttle", new Engine[]{s1, s2, pb, sb}),new Spacecraft("Saturn V", new Engine[]{si, sii, siii}),new Spacecraft("Soviet Energia", new Engine[]{me,b1,b2,b3,b4}),new Spacecraft("Falcon 9", new Engine[]{m1,m2}),new Spacecraft("Falcon Heavy", new Engine[]{m1h,m2h,mb1,mb2}),new Spacecraft("Space-X Starship", new Engine[]{s1h, s2h})};
+		return new Spacecraft[]{new Spacecraft("NASA Space Shuttle", 10, new Engine[]{s1, s2, pb, sb}),new Spacecraft("Saturn V", 3, new Engine[]{si, sii, siii}),new Spacecraft("Soviet Energia", 0, new Engine[]{me,b1,b2,b3,b4}),new Spacecraft("Falcon 9", 6, new Engine[]{m1,m2}),new Spacecraft("Falcon Heavy", 8, new Engine[]{m1h,m2h,mb1,mb2}),new Spacecraft("Space-X Starship", 30, new Engine[]{s1h, s2h})};
 	}
 
 	@Override
@@ -42,6 +44,11 @@ public class DefaultContent extends ContentPack {
 	@Override
 	public Planet[] getPlanets() {
 		return new Planet[]{new Planet("Earth [Default]",(5.9724*(Math.pow(10, 24))),6378137.0),new Planet("Earth's Moon",(7.342*(Math.pow(10, 22))),1738100.0),new Planet("Mars",(6.417*(Math.pow(10, 23))),3389300.0)};
+	}
+
+	@Override
+	public LookAndFeel[] getLAFs() {
+		return null;
 	}
 
 }

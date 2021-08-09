@@ -4,10 +4,12 @@ public class Spacecraft {
 
 	private Engine[] e;
 	private String n;
+	private int cs;
 	
-	public Spacecraft(String name, Engine[] engines) {
+	public Spacecraft(String name, int CrewSize, Engine[] engines) {
 		e = engines;
 		n = name;
+		cs = CrewSize;
 	}
 	
 	public Engine[] getEngines() {
@@ -16,6 +18,10 @@ public class Spacecraft {
 	
 	public String toString() {
 		return n;
+	}
+	
+	public int getCrewSize() {
+		return cs;
 	}
 
 }

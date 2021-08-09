@@ -12,6 +12,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.Timer;
 
+import tk.tfinnm.spaceflight.core.Debrief;
 import tk.tfinnm.spaceflight.core.FlightPanel;
 
 public class Heat extends JPanel {
@@ -19,6 +20,7 @@ public class Heat extends JPanel {
 	public static int temp = 20;
 	public static boolean status = true;
 	public static JSlider control;
+	public static Timer timer;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -34,7 +36,7 @@ public class Heat extends JPanel {
 					FlightPanel.logEvent("Heater Activated");
 				} else {
 					toggle.setText("Turn On Heater");
-					FlightPanel.logEvent("Scrubber Deactivated");
+					FlightPanel.logEvent("Heater Deactivated");
 				}
 			}
 		});
@@ -54,7 +56,7 @@ public class Heat extends JPanel {
 		add(level, BorderLayout.NORTH);
 		add(new JLabel(" "), BorderLayout.EAST);
 		add(new JLabel(" "), BorderLayout.WEST);
-		Timer timer = new Timer(1000, new ActionListener() {
+		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (status) {
@@ -69,8 +71,9 @@ public class Heat extends JPanel {
 				level.setString("Temperature: "+temp+"C [Ideal: 10-20C]");
 				level.setValue(temp);
 				if (temp <= 0) {
+					FlightPanel.logEvent("Life Support Failure, Temperature Critically Low.");
 					JOptionPane.showMessageDialog(null, "Life Support Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-					System.exit(0);
+					FlightPanel.debrief();
 				}
 			}
 		});

@@ -75,6 +75,7 @@ public class Engine {
 				rel.setEnabled(true);
 				ign.setEnabled(false);
 				burn = true;
+				FlightPanel.logEvent(name+" Ignited");
 			}
 		});
 		rel.addActionListener(new ActionListener() {
@@ -91,6 +92,7 @@ public class Engine {
 					}
 				}
 				rel.setBackground(ogColor);
+				FlightPanel.logEvent(name+" Jettisoned");
 			}
 		});
 		if (pre) ign.setEnabled(false);

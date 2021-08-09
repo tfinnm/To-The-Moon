@@ -2,7 +2,7 @@ package tk.tfinnm.spaceflight.components;
 
 public class Spacecraft {
 	
-	public Spacecraft(String name, Engine[] engines) {
+	public Spacecraft(String name, int CrewSize, Engine[] engines) {
 	}
 	
 	public Engine[] getEngines() {
@@ -11,6 +11,10 @@ public class Spacecraft {
 	
 	public String toString() {
 		return null;
+	}
+	
+	public int getCrewSize() {
+		return 0;
 	}
 
 }

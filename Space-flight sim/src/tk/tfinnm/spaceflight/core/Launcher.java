@@ -29,6 +29,13 @@ public class Launcher {
 	private final static String URL = "http://localhost/update"; //testing
 
 	public static void main(String[] args) {
+		new dataManager();
+		try {
+			UIManager.setLookAndFeel(dataManager.getProp("laf", UIManager.getSystemLookAndFeelClassName()));
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+				| UnsupportedLookAndFeelException e1) {
+			e1.printStackTrace();
+		}
 		launcher = new JFrame("Spaceflight Sim");
 		launcher.setSize(1000, 500);
 		launcher.setLocation(100, 100);
@@ -56,6 +63,33 @@ public class Launcher {
 		missionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		shipList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JCheckBox labMode = new JCheckBox("Use Lab Mode");
+		JSlider simSpeed = new JSlider(JSlider.HORIZONTAL,1,10,1);
+		simSpeed.setPaintLabels(true);
+		simSpeed.setPaintTicks(true);
+		simSpeed.createStandardLabels(3);
+		simSpeed.setMajorTickSpacing(1);
+		JLabel simLabel = new JLabel("Simulation Speed");
+		simLabel.setLabelFor(simSpeed);
+		
+//		JComboBox<LookAndFeelInfo> looks = new JComboBox<LookAndFeelInfo>(UIManager.getInstalledLookAndFeels());
+//		looks.setSelectedItem(UIManager.getLookAndFeel());
+//		looks.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				try {
+//					UIManager.setLookAndFeel(((LookAndFeelInfo)looks.getSelectedItem()).getClassName());
+//					SwingUtilities.updateComponentTreeUI(launcher);
+//					dataManager.setProp("laf", ((LookAndFeelInfo)looks.getSelectedItem()).getClassName());
+//				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+//							| UnsupportedLookAndFeelException e1) {
+//					e1.printStackTrace();
+//				}
+//			}
+//		});
+//		
+//		JLabel lookLabel = new JLabel("Appearence");
+//		lookLabel.setLabelFor(looks);
+		
 		Vector<Planet> planets = new Vector<Planet>();
 		JComboBox<Planet> planet = new JComboBox<Planet>(planets); 
 		play.addActionListener(new ActionListener() {
@@ -63,7 +97,7 @@ public class Launcher {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new FlightPanel(shipList.getSelectedValue(),missionList.getSelectedValuesList(),(Planet) planet.getSelectedItem(),labMode.isSelected());
+					new FlightPanel(shipList.getSelectedValue(),missionList.getSelectedValuesList(),(Planet) planet.getSelectedItem(), simSpeed.getValue(), labMode.isSelected());
 					launcher.dispose();
 				} catch (Exception e) {
 				}
@@ -73,20 +107,32 @@ public class Launcher {
 		SPcontent.add(play,BorderLayout.SOUTH);
 		//initialize ships
 		for (ContentPack p: mods) {
-			for(Spacecraft s: p.getSpacecrafts()) {
-				ships.add(s);
+			if (p.getSpacecrafts() != null) {
+				for(Spacecraft s: p.getSpacecrafts()) {
+					ships.add(s);
+				}
 			}
-			for(Mission m: p.getMissions()) {
-				missions.add(m);
+			if (p.getMissions() != null) {
+				for(Mission m: p.getMissions()) {
+					missions.add(m);
+				}
 			}
-			for(Planet plan: p.getPlanets()) {
-				planets.add(plan);
+			if (p.getPlanets() != null) {
+				for(Planet plan: p.getPlanets()) {
+					planets.add(plan);
+				}
+			}
+			if (p.getLAFs() != null) {
+				for(LookAndFeel laf: p.getLAFs()) {
+					UIManager.installLookAndFeel(laf.getName(), laf.getClass().getCanonicalName());
+				}
 			}
 		}
 		//TODO: ship customizer
 		//TODO: unlockable parts
 		//TODO: custom scenarios
 		//TODO: savegames
+		//TODO: Debrief screen after failure/on exit
 		shipList.setSelectedIndex(0);
 		missionList.setSelectedIndices(new int[]{0,1});
 		planet.setSelectedIndex(0);
@@ -101,9 +147,14 @@ public class Launcher {
 		advancedPanel.setLayout(new BorderLayout());
 		JPanel simPanel = new JPanel();
 		simPanel.setBorder(BorderFactory.createTitledBorder("Simulation"));
+		simPanel.setLayout(new GridLayout(0,1));
 		JPanel envPanel = new JPanel();
 		envPanel.setBorder(BorderFactory.createTitledBorder("Enviroment"));
 		simPanel.add(labMode);
+		simPanel.add(simLabel);
+		simPanel.add(simSpeed);
+//		simPanel.add(lookLabel);
+//		simPanel.add(looks);
 		advancedPanel.add(simPanel,BorderLayout.NORTH);
 		envPanel.add(planet);
 		advancedPanel.add(envPanel,BorderLayout.CENTER);

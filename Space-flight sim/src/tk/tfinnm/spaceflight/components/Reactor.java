@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import tk.tfinnm.spaceflight.components.Crew.crewType;
 import tk.tfinnm.spaceflight.core.FlightPanel;
 
 public class Reactor extends JPanel {
@@ -15,11 +16,15 @@ public class Reactor extends JPanel {
 	public static int output = 0;
 	public static int temperature = 0;
 	public static int radiation = 1;
+	public static Timer timer;
+	
+	static JSlider control;
+	static JButton SCRAM;
 	
 	public Reactor() {
 		setBorder(BorderFactory.createTitledBorder("Reactor"));
 		setLayout(new GridLayout(0,1));
-		JButton SCRAM = new JButton("SCRAM/Reactor Trip");
+		SCRAM = new JButton("SCRAM/Reactor Trip");
 		JProgressBar Out = new JProgressBar();
 		Out.setMaximum(10);
 		Out.setValue(output);
@@ -35,7 +40,7 @@ public class Reactor extends JPanel {
 		Rad.setValue(radiation);
 		Rad.setString("Radiation: "+radiation+"mSv");
 		Rad.setStringPainted(true);
-		JSlider control = new JSlider(JSlider.HORIZONTAL,0,10,0);
+		control = new JSlider(JSlider.HORIZONTAL,0,10,0);
 		control.setPaintLabels(true);
 		control.setPaintTicks(true);
 		control.createStandardLabels(1);
@@ -47,8 +52,16 @@ public class Reactor extends JPanel {
 				temperature = 0;
 				output = 0;
 				control.setValue(0);
-				control.setEnabled(false);
-				SCRAM.setEnabled(false);
+				boolean hasTech = false;
+				for (Crew c: Crew.crew) {
+					if (c.type.equals(crewType.Technician)) {
+						hasTech = true;
+					}
+				}
+				if (!hasTech) {
+					control.setEnabled(false);
+					SCRAM.setEnabled(false);
+				}
 			}
 		});
 		add(control);
@@ -56,7 +69,7 @@ public class Reactor extends JPanel {
 		add(Temp);
 		add(Rad);
 		add(SCRAM);
-		Timer timer = new Timer(1000, new ActionListener() {
+		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (temperature < control.getValue()*10) {
@@ -67,6 +80,9 @@ public class Reactor extends JPanel {
 				output = temperature/10;
 				if ((temperature+Heat.temp) > 100) {
 					radiation += 50*(((temperature+Heat.temp)-100)/10);
+					if (FlightPanel.autoscram.isSelected()) {
+						SCRAM.doClick();
+					}
 				} else {
 					if (radiation > 1) {
 						radiation--;
@@ -75,7 +91,7 @@ public class Reactor extends JPanel {
 				if (radiation >= 400) {
 					FlightPanel.logEvent("Reactor Meltdown [Temp: "+(temperature+Heat.temp)+"; Rad: "+radiation+"mSv]");
 					JOptionPane.showMessageDialog(null, "Total Meltdown; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-					System.exit(0);
+					FlightPanel.debrief();
 				}
 				Out.setString("Output: "+output*60+"watts");
 				Temp.setString("Temp: "+(temperature+Heat.temp)+"C [Safe <100C]");

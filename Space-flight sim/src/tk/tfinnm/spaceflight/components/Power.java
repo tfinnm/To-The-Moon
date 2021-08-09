@@ -16,6 +16,7 @@ public class Power extends JPanel {
 	public static int Output = 0;
 	public static int storage = 0;
 	public static JSlider control;
+	public static Timer timer;
 	
 	public Power() {
 		setBorder(BorderFactory.createTitledBorder("Power"));
@@ -44,7 +45,7 @@ public class Power extends JPanel {
 		add(Out);
 		add(In);
 		add(Store);
-		Timer timer = new Timer(1000, new ActionListener() {
+		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Store.setMaximum(control.getValue());
@@ -63,9 +64,25 @@ public class Power extends JPanel {
 						}
 					}
 				}
+				if (FlightPanel.autoadjustreactor.isSelected()) {
+					if (Input-10 >= Output) {
+						Reactor.control.setValue(Reactor.control.getValue()-1);
+					} else if (Output > Input && Reactor.control.getValue() < 10) {
+						if ((Reactor.temperature+Heat.temp) == 100) {
+							if (Heat.temp > 10 && FlightPanel.autoadjusttemp.isSelected()) {
+								Heat.control.setValue(10);
+							}
+						} else {
+							Reactor.control.setValue(Reactor.control.getValue()+1);
+						}
+					}
+				}
 				storage += Input-Output;
 				if (storage > (control.getValue())) {
 					storage = control.getValue();
+				}
+				if (LaunchConfirm.Status != LaunchConfirm.status.ready) {
+					FlightPanel.lifeDataLog.add(FlightPanel.formatTime((int)FlightPanel.alti.getMaxX())+","+Input*60+","+Output*60+","+storage+","+Heat.temp+","+Oxygen.oxygen+","+Reactor.temperature+Heat.temp+","+Reactor.radiation);
 				}
 				boolean oop = false;
 				if (storage < 0) {
@@ -81,7 +98,7 @@ public class Power extends JPanel {
 					if (!FlightPanel.lab) {
 						FlightPanel.logEvent("Power Failure");
 						JOptionPane.showMessageDialog(null, "Power Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-						System.exit(0);
+						FlightPanel.debrief();
 					}
 				}
 			}

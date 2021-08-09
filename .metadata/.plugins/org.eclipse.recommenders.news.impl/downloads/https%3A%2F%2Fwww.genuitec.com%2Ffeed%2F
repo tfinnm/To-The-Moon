@@ -12,7 +12,7 @@
 	<atom:link href="https://www.genuitec.com/feed/" rel="self" type="application/rss+xml" />
 	<link>https://www.genuitec.com</link>
 	<description>The Cloud Control Company</description>
-	<lastBuildDate>Wed, 24 Jun 2020 20:47:45 +0000</lastBuildDate>
+	<lastBuildDate>Wed, 30 Jun 2021 18:46:45 +0000</lastBuildDate>
 	<language>en-US</language>
 	<sy:updatePeriod>
 	hourly	</sy:updatePeriod>
@@ -20,6 +20,20 @@
 	1	</sy:updateFrequency>
 	
 	<item>
+		<title>CodeTogether 4.1—Server Sharing, SAP ABAP Support &#038; Coding Enhancements</title>
+		<link>https://www.genuitec.com/codetogether-4-1/</link>
+				<pubDate>Tue, 29 Jun 2021 18:50:41 +0000</pubDate>
+		<dc:creator><![CDATA[Brian Fernandes]]></dc:creator>
+				<category><![CDATA[CodeTogether]]></category>
+		<category><![CDATA[Genuitec]]></category>
+		<category><![CDATA[In Product]]></category>
+
+		<guid isPermaLink="false">https://www.genuitec.com/?p=674747</guid>
+				<description><![CDATA[<p>CodeTogether 4.1 is now available! Server sharing, SAP ABAP support, rename refactoring, plus Open Symbol and Full File Content Search across all clients.  </p>
+<p>The post <a rel="nofollow" href="https://www.genuitec.com/codetogether-4-1/">CodeTogether 4.1—Server Sharing, SAP ABAP Support &#038; Coding Enhancements</a> appeared first on <a rel="nofollow" href="https://www.genuitec.com">Genuitec</a>.</p>
+]]></description>
+									</item>
+		<item>
 		<title>MyEclipse 2021.5.24—Refreshed and Refined!</title>
 		<link>https://www.genuitec.com/myeclipse-2021-5-24/</link>
 				<pubDate>Tue, 25 May 2021 14:32:22 +0000</pubDate>
@@ -208,27 +222,15 @@
 <p>The post <a rel="nofollow" href="https://www.genuitec.com/codetogether-1-2-end-to-end-secured-remote-pair-programming/">CodeTogether 1.2: End-to-End Secured Remote Pair Programming</a> appeared first on <a rel="nofollow" href="https://www.genuitec.com">Genuitec</a>.</p>
 ]]></description>
 									</item>
-		<item>
-		<title>MyEclipse 2020.5.18 is Here &#8211; Java 14, Eclipse 2020-03 and More</title>
-		<link>https://www.genuitec.com/myeclipse-2020-5-18/</link>
-				<pubDate>Mon, 18 May 2020 17:18:48 +0000</pubDate>
-		<dc:creator><![CDATA[Brian Fernandes]]></dc:creator>
-				<category><![CDATA[Genuitec]]></category>
-		<category><![CDATA[MyEclipse]]></category>
-
-		<guid isPermaLink="false">https://www.genuitec.com/?p=658845</guid>
-				<description><![CDATA[<p>The post <a rel="nofollow" href="https://www.genuitec.com/myeclipse-2020-5-18/">MyEclipse 2020.5.18 is Here &#8211; Java 14, Eclipse 2020-03 and More</a> appeared first on <a rel="nofollow" href="https://www.genuitec.com">Genuitec</a>.</p>
-]]></description>
-									</item>
 	</channel>
 </rss>
 
 <!--
 Performance optimized by W3 Total Cache. Learn more: https://www.w3-edge.com/products/
 
-Object Caching 3491/357 objects using disk
+Object Caching 3498/343 objects using disk
 Page Caching using disk: enhanced (SSL caching disabled) 
 Content Delivery Network via resources.cloud.genuitec.com
 
-Served from: www.genuitec.com @ 2021-06-11 22:21:27 by W3 Total Cache
+Served from: www.genuitec.com @ 2021-08-08 10:57:59 by W3 Total Cache
 -->

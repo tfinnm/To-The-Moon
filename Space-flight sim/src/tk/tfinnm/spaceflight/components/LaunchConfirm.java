@@ -45,6 +45,7 @@ public class LaunchConfirm extends JPanel{
 					countdown.setString("T-minus "+time+" seconds");
 					FlightPanel.payload.setEnabled(false);
 					Power.control.setEnabled(false);
+					for (Crew c: Crew.crew) c.select.setEnabled(false);
 					if (time <= 3) {
 						FlightPanel.solid.setEnabled(true);
 						FlightPanel.ignite.setEnabled(true);
@@ -91,13 +92,14 @@ public class LaunchConfirm extends JPanel{
 					time = 10;
 					FlightPanel.payload.setEnabled(true);
 					Power.control.setEnabled(true);
+					for (Crew c: Crew.crew) c.select.setEnabled(true);
 					JOptionPane.showMessageDialog(null, "Launch Aborted Successfully.", "Aborted!", JOptionPane.INFORMATION_MESSAGE);
 				} else {
 					timer.stop();
 					Status = status.aborted;
 					FlightPanel.logEvent("Mission Aborted; LES Activated.");
 					JOptionPane.showMessageDialog(null, "Launch Aborted; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-					System.exit(0);
+					FlightPanel.debrief();
 				}
 			}
 		});

@@ -15,8 +15,9 @@ import tk.tfinnm.spaceflight.core.FlightPanel;
 
 public class Oxygen extends JPanel {
 
-	public double oxygen = 20.9;
+	public static double oxygen = 20.9;
 	public static boolean status = true;
+	public static Timer timer;
 	
 	private static final long serialVersionUID = 1L;
 
@@ -48,7 +49,7 @@ public class Oxygen extends JPanel {
 		add(new JLabel(" "), BorderLayout.SOUTH);
 		add(new JLabel(" "), BorderLayout.EAST);
 		add(new JLabel(" "), BorderLayout.WEST);
-		Timer timer = new Timer(1000, new ActionListener() {
+		timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (status) {
@@ -66,8 +67,9 @@ public class Oxygen extends JPanel {
 					FlightPanel.flightpanel.setLocation((int)(Math.random()*200), (int)(Math.random()*200));
 				}
 				if (oxygen < 6) {
+					FlightPanel.logEvent("Life Support Failure, Oxygen Critically Low");
 					JOptionPane.showMessageDialog(null, "Life Support Failure; Mission Failed.", "Mission Failed!", JOptionPane.ERROR_MESSAGE);
-					System.exit(0);
+					FlightPanel.debrief();
 				}
 			}
 		});
